@@ -2,5 +2,14 @@
 
 
 (function(){
-    // todo: implementation goes here.
+
+
+    var text = [doc askForUserInput:"Enter content for QRCode" initialValue:"Привет дружок! :)"];
+
+    var qrcode = new QRCode();
+    var error=qrcode.drawCode([text UTF8String]);
+    if(error) {
+        // todo: error handling goes here.
+    }
+
 })();
