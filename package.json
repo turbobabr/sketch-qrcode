@@ -1,0 +1,22 @@
+{
+  "name": "sketch-qrcode",
+  "version": "1.0.0",
+  "description": "QRCode generator plugin for Sketch App.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/turbobabr/sketch-qrcode.git"
+  },
+  "author": "Andrey Shakhmin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/turbobabr/sketch-qrcode/issues"
+  },
+  "homepage": "http://www.turbobabr.com/projects/sketch-qrcode",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-compress": "^0.8.0"
+  }
+}
