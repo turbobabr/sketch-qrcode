@@ -282,7 +282,6 @@ var QRCode;
             }
         }
 
-
         return 0;
 
     };
