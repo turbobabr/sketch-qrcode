@@ -1,1 +1,3 @@
-// todo: code goes here
+
+#import 'QRCodeGenerator.js'
+QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.Q);

@@ -233,7 +233,7 @@ var QRCode;
 
         // Adding group layer for the tiles.
         var qrCodeGroup = currentArtboard.addLayerOfType("group");
-        qrCodeGroup.setName("QRCode");
+        qrCodeGroup.setName("QRCode: "+tilesCount+" x "+tilesCount);
 
         qrCodeGroup.frame().x = 0;
         qrCodeGroup.frame().y = 0;
