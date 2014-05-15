@@ -1,6 +1,8 @@
 #import 'QRCode.js'
 
 
+var turbobabr =
+
 (function(){
 
 
