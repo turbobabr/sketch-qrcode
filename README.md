@@ -1,7 +1,7 @@
 Sketch App QR Code Plugin
 =============
 
-![Sketch App QRCode Plugin](https://github.com/turbobabr/sketch-qrcode/blob/gh-pages/images/sketch_qrcode_snapshot.png)
+![Sketch App QRCode Plugin](http://github.com/turbobabr/sketch-qrcode/blob/gh-pages/images/sketch_qrcode_snapshot.png)
 
 ## Installation
 
