@@ -1,3 +1,0 @@
-
-#import 'QRCodeGenerator.js'
-QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.H);

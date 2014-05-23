@@ -23,3 +23,5 @@ var QRCodeGenerator = (function() {
 
     return obj;
 }());
+
+QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.L);
