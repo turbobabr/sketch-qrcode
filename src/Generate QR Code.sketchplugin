@@ -1,6 +1,167 @@
 #import 'QRCode.js'
+#import 'lib/console.js'
 
 
+// var QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
+var QRErrorCorrectLevel = { L: 0, M: 1, Q: 2, H: 3 };
+
+var QRIncludeBlocks = {
+    DarkOnly: 0,
+    LightOnly: 1,
+    Both: 2
+};
+
+
+var defaultOptions = {
+    text: "http://www.turbobabr.com/",
+    errorCorrectionLevel: QRErrorCorrectLevel.L,
+    blockSize: 4,
+    includeBlocks: QRIncludeBlocks.DarkOnly,
+    darkColor: "#000000",
+    lightColor: "#FFFFFF"
+};
+
+var ecMap= {
+    "Low (L)": QRErrorCorrectLevel.L,
+    "Medium (M)": QRErrorCorrectLevel.M,
+    "Quartile (Q)": QRErrorCorrectLevel.Q,
+    "High (H)": QRErrorCorrectLevel.H,
+    labels: ['Low (L)', 'Medium (M)','Quartile (Q)','High (H)']
+};
+
+var includeBlocksMap = {
+    "Dark only": QRIncludeBlocks.DarkOnly,
+    "Light only": QRIncludeBlocks.LightOnly,
+    "Both": QRIncludeBlocks.Both,
+    labels: ['Dark only', 'Light only','Both']
+};
+
+
+
+
+
+function createAlert() {
+    var alert = COSAlertWindow.new();
+
+    function createComboBox (items, selectedItemIndex) {
+        selectedItemIndex = selectedItemIndex || 0
+        var comboBox = NSComboBox.alloc().initWithFrame(NSMakeRect(0, 0, 300, 25));
+        comboBox.addItemsWithObjectValues(items);
+        comboBox.selectItemAtIndex(selectedItemIndex);
+        return comboBox;
+    }
+
+    function createTextFieldWithLavel(label,defaultValue) {
+        alert.addTextLabelWithValue(label);
+        alert.addTextFieldWithValue(defaultValue);
+    }
+
+    // Set icon.
+    var pluginPath = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+    var icon = NSImage.alloc().initByReferencingFile(pluginPath + '/lib/qrcode-icon.icns');
+    alert.setIcon(icon);
+
+    alert.setMessageText("QRCode Settings");
+    alert.setInformativeText("Customize the QR Code that will be created.");
+
+    // Text string to encode.
+    createTextFieldWithLavel("Data to encode:",defaultOptions.text);
+
+    // Error correction level selector.
+    alert.addTextLabelWithValue("Error Correction Level:");
+    alert.addAccessoryView(createComboBox(ecMap.labels,defaultOptions.errorCorrectionLevel));
+
+    // Block size.
+    createTextFieldWithLavel("Block size (pixels):",defaultOptions.blockSize);
+
+    // Render blocks.
+    alert.addTextLabelWithValue("Include blocks:");
+    alert.addAccessoryView(createComboBox(includeBlocksMap.labels,defaultOptions.includeBlocks));
+
+
+    // Dark blocks color.
+    createTextFieldWithLavel("Dark blocks color:",defaultOptions.darkColor);
+
+    // Light blocks color.
+    createTextFieldWithLavel("Light blocks color:",defaultOptions.lightColor);
+
+    // Actions buttons.
+    alert.addButtonWithTitle('OK');
+    alert.addButtonWithTitle('Cancel');
+
+    return alert;
+}
+
+
+
+
+function handleAlertResponse(alert, responseCode) {
+    // The OK button will return a code of 1000
+    // Cancel is 1001.
+    // The codes are odd. They are based off the button's position in the view.
+    // They are explain in more detail in the NSAlert docs
+    // https://developer.apple.com/library/mac/documentation/cocoa/reference/applicationkit/classes/NSAlert_Class/Reference/Reference.html#//apple_ref/doc/constant_group/Button_Return_Values
+    // There's no anchor to it, but search for "Button Return Values" in the page
+    if (responseCode == "1000") {
+
+        function valAtIndex (view, index) {
+            return view.viewAtIndex(index).stringValue()
+        }
+
+        function validateProperty(val,min,max) {
+            if(val<min) return min;
+            if(val>max) return max;
+            return val;
+        }
+
+
+
+        var text=valAtIndex(alert,1).UTF8String();
+        var options = {
+            errorCorrectionLevel: ecMap[valAtIndex(alert, 3).UTF8String()],
+            blockSize: validateProperty(parseFloat(valAtIndex(alert,5)),0.5,100),
+            includeBlocks: includeBlocksMap[valAtIndex(alert, 7).UTF8String()],
+            darkColor: valAtIndex(alert, 9).toLowerCase(),
+            lightColor: valAtIndex(alert, 11).toLowerCase()
+        };
+
+
+
+
+        console.log("");
+        console.log("Text: "+options.text);
+        console.log("Error Correction Level: "+options.errorCorrectionLevel);
+        console.log("Block Size: "+options.blockSize);
+        console.log("Include Blocks: "+options.includeBlocks);
+        console.log("Dark Color: "+options.darkColor);
+        console.log("Light Color: "+options.lightColor);
+
+
+
+
+        // Generate code.
+        var qrcode = new QRCode(options);
+        qrcode.drawCode(text);
+
+
+        //QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.L);
+
+
+    }
+    else {
+
+        console.log("Show was canceled!!!");
+        /*
+         if (removeGroupOnCancel != null) {
+         removeGroupOnCancel.removeLayer(group);
+         }
+         */
+    }
+}
+
+
+
+/*
 var QRCodeGenerator = (function() {
 
     var obj = {};
@@ -23,5 +184,11 @@ var QRCodeGenerator = (function() {
 
     return obj;
 }());
+*/
 
-QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.L);
+// Launching settings dialog.
+var alert = createAlert();
+
+var response = alert.runModal();
+handleAlertResponse(alert,response);
+

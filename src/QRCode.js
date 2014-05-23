@@ -175,6 +175,27 @@ var QRCode;
     }
 
 
+    // Convert HEX string to RGB object.
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    function hexToColor(hex) {
+        var color = [[MSColor alloc] init];
+        var rgb=hexToRgb(hex)
+        [color setRed:rgb.r/255];
+        [color setGreen:rgb.g/255];
+        [color setBlue:rgb.b/255];
+        [color setAlpha:1];
+
+        return color;
+    }
+
 
 
     // QRCode class.
@@ -229,7 +250,7 @@ var QRCode;
 
         // Get number of tiles on a side.
         var tilesCount = this._oQRCode.getModuleCount();
-        var tileSize = 4;
+        var tileSize = this._htOption.blockSize;
 
         // Adding group layer for the tiles.
         var qrCodeGroup = currentArtboard.addLayerOfType("group");
@@ -246,11 +267,7 @@ var QRCode;
 
 
         // Default color for dark parts of QRCode.
-        var color = [[MSColor alloc] init];
-        [color setRed:0.3];
-        [color setGreen:0.3];
-        [color setBlue:0.3];
-        [color setAlpha:1];
+        var color=hexToColor(this._htOption.darkColor);
 
         for (var row = 0    ; row < tilesCount; row++) {
             for (var col = 0; col < tilesCount; col++) {
