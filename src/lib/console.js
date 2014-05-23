@@ -17,7 +17,7 @@ var console = {
         if(!this.enabled) return;
         com.elegantchaos.clear();
     },
-    enabled: true
+    enabled: false
 };
 
 com.elegantchaos = (function() {

@@ -2,7 +2,6 @@
 #import 'lib/console.js'
 
 
-// var QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
 var QRErrorCorrectLevel = { L: 0, M: 1, Q: 2, H: 3 };
 
 var QRIncludeBlocks = {
@@ -11,11 +10,10 @@ var QRIncludeBlocks = {
     Both: 2
 };
 
-
 var defaultOptions = {
     text: "http://www.turbobabr.com/",
     errorCorrectionLevel: QRErrorCorrectLevel.L,
-    blockSize: 4,
+    blockSize: 6,
     includeBlocks: QRIncludeBlocks.DarkOnly,
     darkColor: "#000000",
     lightColor: "#FFFFFF"
@@ -36,8 +34,8 @@ var includeBlocksMap = {
     labels: ['Dark only', 'Light only','Both']
 };
 
-
-
+// Set this property to true for console logging.
+console.enabled = false;
 
 
 function createAlert() {
@@ -93,15 +91,8 @@ function createAlert() {
 }
 
 
-
-
 function handleAlertResponse(alert, responseCode) {
-    // The OK button will return a code of 1000
-    // Cancel is 1001.
-    // The codes are odd. They are based off the button's position in the view.
-    // They are explain in more detail in the NSAlert docs
-    // https://developer.apple.com/library/mac/documentation/cocoa/reference/applicationkit/classes/NSAlert_Class/Reference/Reference.html#//apple_ref/doc/constant_group/Button_Return_Values
-    // There's no anchor to it, but search for "Button Return Values" in the page
+
     if (responseCode == "1000") {
 
         function valAtIndex (view, index) {
@@ -114,8 +105,6 @@ function handleAlertResponse(alert, responseCode) {
             return val;
         }
 
-
-
         var text=valAtIndex(alert,1).UTF8String();
         var options = {
             errorCorrectionLevel: ecMap[valAtIndex(alert, 3).UTF8String()],
@@ -125,9 +114,6 @@ function handleAlertResponse(alert, responseCode) {
             lightColor: valAtIndex(alert, 11).toLowerCase()
         };
 
-
-
-
         console.log("");
         console.log("Text: "+options.text);
         console.log("Error Correction Level: "+options.errorCorrectionLevel);
@@ -136,59 +122,18 @@ function handleAlertResponse(alert, responseCode) {
         console.log("Dark Color: "+options.darkColor);
         console.log("Light Color: "+options.lightColor);
 
-
-
-
         // Generate code.
         var qrcode = new QRCode(options);
         qrcode.drawCode(text);
-
-
-        //QRCodeGenerator.generateQRCode(QRCodeGenerator.QRErrorCorrectLevel.L);
-
-
     }
     else {
-
         console.log("Show was canceled!!!");
-        /*
-         if (removeGroupOnCancel != null) {
-         removeGroupOnCancel.removeLayer(group);
-         }
-         */
     }
 }
 
 
-
-/*
-var QRCodeGenerator = (function() {
-
-    var obj = {};
-
-    obj.QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
-
-    obj.generateQRCode = function(ecLevel) {
-        var text = [doc askForUserInput:"Enter URL or text" initialValue:"http://www.turbobabr.com/"];
-
-        var qrcode = new QRCode(
-            {
-                correctLevel: ecLevel
-            }
-        );
-        var error=qrcode.drawCode([text UTF8String]);
-        if(error) {
-            // todo: error handling goes here.
-        }
-    };
-
-    return obj;
-}());
-*/
-
 // Launching settings dialog.
 var alert = createAlert();
-
 var response = alert.runModal();
 handleAlertResponse(alert,response);
 
