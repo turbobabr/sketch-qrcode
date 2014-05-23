@@ -36,7 +36,7 @@ var includeBlocksMap = {
 };
 
 // Set this property to true for console logging.
-console.enabled = false;
+console.enabled = true;
 
 
 function createAlert() {

@@ -221,38 +221,17 @@ var QRCode;
         this._oQRCode.addData(sText);
         this._oQRCode.make();
 
-        // Find the current artboard
-        var layer = selection[0];
-        if (layer)
-        {
-            var currentArtboard;
-
-            do {
-                if (layer.class() === MSArtboardGroup)
-                {
-                    currentArtboard = layer;
-                    break;
-                }
-
-                layer = layer.parentGroup();
-
-            } while (layer);
-
-        } else {
-            currentArtboard = doc.currentPage().artboards()[0];
-        }
-
-        if (!currentArtboard)
-        {
-            currentArtboard = doc.currentPage();
-        }
+        // Get current "canvas".
+        var page = [doc currentPage],
+            artboard = [[doc currentPage] currentArtboard],
+            currentCanvas = artboard ? artboard : page;
 
         // Get number of blocks on a side.
         var blockCount = this._oQRCode.getModuleCount();
         var blockSize = this.options.blockSize;
 
         // Adding group layer for blocks.
-        var qrCodeGroup = currentArtboard.addLayerOfType("group");
+        var qrCodeGroup = currentCanvas.addLayerOfType("group");
         qrCodeGroup.setName("QRCode: "+blockCount+" x "+blockCount);
 
         qrCodeGroup.frame().x = 0;
