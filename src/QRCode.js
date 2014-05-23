@@ -185,6 +185,7 @@ var QRCode;
         } : null;
     }
 
+    // Convert HEX string to MSColor object.
     function hexToColor(hex) {
         var color = [[MSColor alloc] init];
         var rgb=hexToRgb(hex)
@@ -199,11 +200,10 @@ var QRCode;
 
 
     // QRCode class.
-    QRCode = function (options) {
+    QRCode = function (opts) {
+        this.options = opts;
 
-        this._htOption = options;
-        // var QRErrorCorrectLevel = { L: 0, M: 1, Q: 2, H: 3 };
-
+        // TODO: Dirty hack (or just a bad programming)!
         var mp = {
             0: QRErrorCorrectLevel.L,
             1: QRErrorCorrectLevel.M,
@@ -211,21 +211,13 @@ var QRCode;
             3: QRErrorCorrectLevel.H
         };
 
-
-
-
-        this._htOption.errorCorrectionLevel = mp[options.errorCorrectionLevel];
-
-
-
-
+        this.options.errorCorrectionLevel = mp[this.options.errorCorrectionLevel];
         this._oQRCode = null;
-
     };
 
     QRCode.prototype.drawCode = function (sText) {
 
-        this._oQRCode = new QRCodeModel(_getTypeNumber(sText, this._htOption.errorCorrectionLevel), this._htOption.errorCorrectionLevel);
+        this._oQRCode = new QRCodeModel(_getTypeNumber(sText, this.options.errorCorrectionLevel), this.options.errorCorrectionLevel);
         this._oQRCode.addData(sText);
         this._oQRCode.make();
 
@@ -255,54 +247,65 @@ var QRCode;
             currentArtboard = doc.currentPage();
         }
 
-        // Get number of tiles on a side.
-        var tilesCount = this._oQRCode.getModuleCount();
-        var tileSize = this._htOption.blockSize;
+        // Get number of blocks on a side.
+        var blockCount = this._oQRCode.getModuleCount();
+        var blockSize = this.options.blockSize;
 
-        // Adding group layer for the tiles.
+        // Adding group layer for blocks.
         var qrCodeGroup = currentArtboard.addLayerOfType("group");
-        qrCodeGroup.setName("QRCode: "+tilesCount+" x "+tilesCount);
+        qrCodeGroup.setName("QRCode: "+blockCount+" x "+blockCount);
 
         qrCodeGroup.frame().x = 0;
         qrCodeGroup.frame().y = 0;
 
-        qrCodeGroup.frame().width = tileSize*tilesCount;
-        qrCodeGroup.frame().height = tileSize*tilesCount;
-
-        var tileWidth=tileSize;
-        var tileHeight=tileSize;
-
+        qrCodeGroup.frame().width = blockSize*blockCount;
+        qrCodeGroup.frame().height = blockSize*blockCount;
 
         // Default color for dark parts of QRCode.
-        var color=hexToColor(this._htOption.darkColor);
+        var darkColor=hexToColor(this.options.darkColor);
+        var lightColor=hexToColor(this.options.lightColor);
 
-        for (var row = 0    ; row < tilesCount; row++) {
-            for (var col = 0; col < tilesCount; col++) {
-                if (this._oQRCode.isDark(row, col)) {
+        for (var row = 0    ; row < blockCount; row++) {
+            for (var col = 0; col < blockCount; col++) {
 
-                    var x = col * tileWidth;
-                    var y = row * tileHeight;
+                var x = col * blockSize;
+                var y = row * blockSize;
 
-                    var tileLayer = qrCodeGroup.addLayerOfType("rectangle");
+                function addBlock(color,isDark) {
+                    var blockLayer = qrCodeGroup.addLayerOfType("rectangle");
 
                     // Set default style.
-                    var style = [[tileLayer style] fills];
+                    var style = [[blockLayer style] fills];
                     var stylePart=style.addNewStylePart();
                     stylePart.color=color;
                     stylePart.fillType=0;
 
 
-                    tileLayer.setName("Tile: (" + col+","+row+")");
+                    blockLayer.setName(isDark ? "Dark Block: (" + col+","+row+")" : "Light Block: (" + col+","+row+")");
 
-                    var tileLayerFrame = tileLayer.frame();
+                    var blockLayerFrame = blockLayer.frame();
 
-                    tileLayerFrame.setX(x);
-                    tileLayerFrame.setY(y);
+                    blockLayerFrame.setX(x);
+                    blockLayerFrame.setY(y);
 
-                    tileLayerFrame.setWidth(tileWidth);
-                    tileLayerFrame.setHeight(tileHeight);
-
+                    blockLayerFrame.setWidth(blockSize);
+                    blockLayerFrame.setHeight(blockSize);
                 }
+
+                var isDark=this._oQRCode.isDark(row, col);
+
+                if(this.options.includeBlocks==0 && isDark) {
+                    addBlock(darkColor,isDark);
+                }
+
+                if(this.options.includeBlocks==1 && !isDark) {
+                    addBlock(lightColor,isDark);
+                }
+
+                if(this.options.includeBlocks==2) {
+                    addBlock(isDark ? darkColor : lightColor,isDark);
+                }
+
             }
         }
 
