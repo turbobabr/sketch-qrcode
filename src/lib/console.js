@@ -9,8 +9,15 @@
 var com = com || {};
 
 var console = {
-    log: function(message) { com.elegantchaos.log(message); },
-    clear: function() { com.elegantchaos.clear(); }
+    log: function(message) {
+        if(!this.enabled) return;
+        com.elegantchaos.log(message);
+    },
+    clear: function() {
+        if(!this.enabled) return;
+        com.elegantchaos.clear();
+    },
+    enabled: true
 };
 
 com.elegantchaos = (function() {
