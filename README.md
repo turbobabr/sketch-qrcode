@@ -10,7 +10,7 @@ Sketch QR Code Plugin
 
 2. Reveal plugins folder in finder ('Sketch App Menu' -> 'Plugins' -> 'Reveal Plugins Folder...').
 
-3. Copy QR Code.zip file in the folder and un-zip it.
+3. Copy QR Code.zip file to the folder and un-zip it.
 
 
 ## License
