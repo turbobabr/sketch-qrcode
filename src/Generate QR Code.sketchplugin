@@ -1,5 +1,6 @@
-#import 'QRCode.js'
+
 #import 'lib/console.js'
+#import 'lib/QRCode.js'
 
 
 var QRErrorCorrectLevel = { L: 0, M: 1, Q: 2, H: 3 };
