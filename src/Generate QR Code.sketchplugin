@@ -2,6 +2,10 @@
 #import 'lib/console.js'
 #import 'lib/QRCode.js'
 
+// Set this property to true for console logging.
+console.enabled = false;
+console.clear();
+
 
 var QRErrorCorrectLevel = { L: 0, M: 1, Q: 2, H: 3 };
 
@@ -35,8 +39,6 @@ var includeBlocksMap = {
     labels: ['Dark only', 'Light only','Both']
 };
 
-// Set this property to true for console logging.
-console.enabled = true;
 
 // Workaround for Sketch Beta!.
 // For no particular reason 'scriptPath' variable is undefined in Sketch Beta Version 3.0.3 (7884) :(
@@ -52,9 +54,6 @@ function getScriptPath() {
 
 // Use 'scriptPath' variable if available.
 var scriptPath = scriptPath || getScriptPath();
-
-console.log(scriptPath);
-
 
 
 
@@ -76,7 +75,6 @@ function createAlert() {
 
     // Set icon.
     var pluginPath = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
-    console.log("Plugin path: "+pluginPath);
     var icon = NSImage.alloc().initByReferencingFile(pluginPath + '/lib/qrcode-icon.icns');
     alert.setIcon(icon);
 
@@ -134,14 +132,6 @@ function handleAlertResponse(alert, responseCode) {
             darkColor: valAtIndex(alert, 9).toLowerCase(),
             lightColor: valAtIndex(alert, 11).toLowerCase()
         };
-
-        console.log("");
-        console.log("Text: "+options.text);
-        console.log("Error Correction Level: "+options.errorCorrectionLevel);
-        console.log("Block Size: "+options.blockSize);
-        console.log("Include Blocks: "+options.includeBlocks);
-        console.log("Dark Color: "+options.darkColor);
-        console.log("Light Color: "+options.lightColor);
 
         // Generate code.
         var qrcode = new QRCode(options);
