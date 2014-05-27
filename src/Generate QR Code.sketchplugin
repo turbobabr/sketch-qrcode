@@ -36,7 +36,26 @@ var includeBlocksMap = {
 };
 
 // Set this property to true for console logging.
-console.enabled = false;
+console.enabled = true;
+
+// Workaround for Sketch Beta!.
+// For no particular reason 'scriptPath' variable is undefined in Sketch Beta Version 3.0.3 (7884) :(
+// Have to use a dirty combination of constant path parts and MSPlugin.pluginsURL() class method instead of accessing 'skriptPath' variable directly.
+function getScriptPath() {
+    var folderPath=MSPlugin.pluginsURL().path();
+
+    // TODO: This smells really bad! Have to add some dev/deploy processing using Grunt here.
+    var partialPath="/sketch-qrcode/src/Generate QR Code.sketchplugin";
+
+    return folderPath+partialPath;
+}
+
+// Use 'scriptPath' variable if available.
+var scriptPath = scriptPath || getScriptPath();
+
+console.log(scriptPath);
+
+
 
 
 function createAlert() {
@@ -57,6 +76,7 @@ function createAlert() {
 
     // Set icon.
     var pluginPath = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+    console.log("Plugin path: "+pluginPath);
     var icon = NSImage.alloc().initByReferencingFile(pluginPath + '/lib/qrcode-icon.icns');
     alert.setIcon(icon);
 
@@ -137,4 +157,6 @@ function handleAlertResponse(alert, responseCode) {
 var alert = createAlert();
 var response = alert.runModal();
 handleAlertResponse(alert,response);
+
+
 
